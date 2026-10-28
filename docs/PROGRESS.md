@@ -2,6 +2,14 @@
 
 更新：2026-10-28。开发分支：codex/vocabulary-app。
 
+## 本次接手（2026-10-28，Muse 继续开发，非 Codex 桌面端）
+
+- 基线验证：npm ci 通过；npm test 60/60 通过；npm run build 通过。端到端在本机未跑通，原因仅是本机缺少 Chrome（/opt/google/chrome/chrome 不存在），Playwright 下载亦超时，不是代码测试失败，不得把此前 Codex 桌面端的端到端结果冒充为本次结果。
+- 修复首要待处理问题：重复导入内置练习包时，mergePoints 会按 ID 无条件覆盖，导致用户后来修改过的同 ID 释义被静默覆盖。已先写回归测试复现失败（期望用户义项，实际得到默认义项），再修复 src/content.ts：新增 isUserEdited / mergePointsWithReport，已校对内容在默认内容重导入时保留并记入 conflicts；用户新保存的校对内容仍可覆盖旧校对内容；非用户校对内容的词包更新仍可覆盖。src/ImportPanel.tsx 在预览和确认时明确提示被保留的已校对词。修复后 npm test 66 项通过（基线 60 项，新增 6 项：5 项重复导入回归 + 1 项第三组词包），npm run build 通过。
+- 内容扩充（最小范围）：新增第三组原创学术词汇练习包 public/wordpacks/core-academic-03.json，共 6 个知识点（anticipate、component、conduct、consistent、contrast、potential），均为三份社区候选拼写列表的交集词形，义项和例句为本项目原创，每词只取一个核心义项，音标与音频尚未接入，不冒充原书完整版，不发布公开下载入口。ImportPanel 新增第三组预览入口，README 已同步说明。
+- 候选拼写复核：2026-10-28 重新运行 scripts/prepare-candidates.mjs，得到红宝书 4770 个不同拼写、六级 2345 个、雅思 3697 个不同拼写（源记录 3744 条，含变体），与此前记录一致；这些数字不是官方全书词数，候选内容仍在待校对区。
+- 仍未完成：真实 Supabase 登录、RLS、双设备同步、密码恢复邮件、真机网络可达性；完整释义/音标/音频接入；作答撤销；计时与起点抽查跨设备同步；至少一周个人试用验证估时与任务量。以上均未在本轮声称为已完成。
+
 ## 已实现
 
 - 手机优先React PWA：今日、词库、薄弱项、我的；本地开发预览默认5173。
