@@ -2,11 +2,12 @@ import { test, expect } from "@playwright/test";
 
 const fakeCloud = `
 const listeners = new Set();
-window.fakeAuth = { requests: [], failReset: false, failUpdate: false, emit(event) { for (const callback of listeners) callback(event, { user: { email: "learner@example.test" } }); } };
+window.fakeAuth = { requests: [], failReset: false, failUpdate: false, failSignOut: false, emit(event) { for (const callback of listeners) callback(event, event === "SIGNED_OUT" ? null : { user: { email: "learner@example.test" } }); } };
 export const cloud = { auth: {
   getSession: async () => ({ data: { session: null } }),
   onAuthStateChange(callback) { listeners.add(callback); return { data: { subscription: { unsubscribe() { listeners.delete(callback); } } } }; },
   resetPasswordForEmail: async (email, options) => { window.fakeAuth.requests.push({ method: "reset", email, redirect: options.redirectTo }); return { error: window.fakeAuth.failReset ? new Error("offline") : null }; },
+  signOut: async () => { if (window.fakeAuth.failSignOut) return { error: new Error("offline") }; window.fakeAuth.emit("SIGNED_OUT"); return { error: null }; },
   updateUser: async () => { window.fakeAuth.requests.push({ method: "update" }); return { error: window.fakeAuth.failUpdate ? new Error("expired") : null }; }
 }};
 export const synchronizeCloud = async () => 0;
@@ -41,4 +42,18 @@ test("recovery event opens password form and retains it after an update failure"
   await page.getByRole("button", { name: "更新密码" }).click();
   await expect(page.getByRole("status")).toContainText("密码已更新");
   expect(await page.evaluate(() => sessionStorage.getItem("password-recovery"))).toBeNull();
+});
+
+test("sign out reports an error without claiming success and allows retry", async ({ page }) => {
+  await page.getByRole("navigation", { name: "手机导航" }).getByRole("button", { name: "我的", exact: true }).click();
+  await page.evaluate(() => (window as any).fakeAuth.emit("SIGNED_IN"));
+  await expect(page.getByText("已登录：learner@example.test")).toBeVisible();
+  await page.evaluate(() => { (window as any).fakeAuth.failSignOut = true; });
+  await page.getByRole("button", { name: "退出账号" }).click();
+  await expect(page.getByRole("status")).toContainText("退出失败");
+  await expect(page.getByText("已登录：learner@example.test")).toBeVisible();
+  await page.evaluate(() => { (window as any).fakeAuth.failSignOut = false; });
+  await page.getByRole("button", { name: "退出账号" }).click();
+  await expect(page.getByRole("status")).toContainText("已退出");
+  await expect(page.getByLabel("邮箱")).toBeVisible();
 });

@@ -111,8 +111,17 @@ export default function CloudPanel({
               className="secondary"
               disabled={busy}
               onClick={async () => {
-                await cloud!.auth.signOut();
-                setMessage("已退出，本机记录保留并仍关联原账号。");
+                setBusy(true);
+                setMessage("");
+                try {
+                  const { error } = await cloud!.auth.signOut();
+                  if (error) throw error;
+                  setMessage("已退出，本机记录保留并仍关联原账号。");
+                } catch {
+                  setMessage("退出失败，请检查网络后重试。");
+                } finally {
+                  setBusy(false);
+                }
               }}
             >
               退出账号
