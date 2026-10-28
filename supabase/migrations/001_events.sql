@@ -25,4 +25,3 @@ grant usage,select on sequence public.review_events_sequence_seq to authenticate
 create policy "read own reviews" on public.review_events for select to authenticated using((select auth.uid())=user_id);
 create policy "insert own reviews" on public.review_events for insert to authenticated with check((select auth.uid())=user_id);
 -- Immutable events: clients receive no UPDATE or DELETE policies.
-

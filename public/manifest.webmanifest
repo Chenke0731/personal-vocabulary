@@ -1,1 +1,17 @@
-{"name":"词间 · 个人英语词汇","short_name":"词间","start_url":"/","display":"standalone","background_color":"#f6f8fc","theme_color":"#2458ac","lang":"zh-CN","icons":[{"src":"/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]}
+{
+  "name": "词间 · 个人英语词汇",
+  "short_name": "词间",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6f8fc",
+  "theme_color": "#2458ac",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
