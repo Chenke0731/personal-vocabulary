@@ -34,7 +34,7 @@ export default function CloudPanel({
       if (error) throw new Error("登录失败，请检查账号、密码或网络。");
       await synchronizeCloud();
       await onSynced();
-      setMessage("已登录并完成本次作答同步。");
+      setMessage("已登录，作答、私有词包及学习设置已同步。");
     } catch (e) {
       setMessage(e instanceof Error ? e.message : "登录失败。");
     } finally {
@@ -46,7 +46,7 @@ export default function CloudPanel({
     try {
       const count = await synchronizeCloud();
       await onSynced();
-      setMessage(`同步完成，本次上传 ${count} 条作答。`);
+      setMessage(`同步完成，词包与设置已更新，本次上传 ${count} 条作答。`);
     } catch (e) {
       setMessage(e instanceof Error ? e.message : "同步失败，本机记录仍在。");
     } finally {
@@ -55,7 +55,7 @@ export default function CloudPanel({
   }
   return (
     <section className="settings-section">
-      <h2>账号与云端作答同步</h2>
+      <h2>账号与云端同步</h2>
       {!cloud ? (
         <>
           <p>尚未配置云服务，当前记录仅保存在本机。</p>
@@ -82,13 +82,13 @@ export default function CloudPanel({
             </button>
           </div>
           <p className="muted">
-            当前同步作答记录。词包、收藏及学习设置请使用备份在设备间迁移。
+            同步作答、私有词包、收藏、学习预算和每日新词分配；计时与起点抽查仍保存在本机。
           </p>
         </>
       ) : (
         <form onSubmit={login} className="cloud-form">
           <p>
-            登录后将本机学习记录关联到此账号。请使用你在自有云服务中创建的账号。
+            登录后将本机作答、私有词包与设置关联到此账号。请使用你在自有云服务中创建的账号。
           </p>
           <label>
             邮箱

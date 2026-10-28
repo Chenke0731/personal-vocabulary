@@ -1,10 +1,10 @@
-import { createClient } from "@supabase/supabase-js";
 import { db, isReview } from "./store";
 import { syncEvents, type RemoteEvents } from "./sync";
 import type { Review } from "./model";
-const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
-export const cloud = url && key ? createClient(url, key) : null;
+import { seedMetadata, exchangeMetadata } from "./metadata";
+import { remoteMetadata } from "./remoteMetadata";
+import { cloud } from "./cloudClient";
+export { cloud } from "./cloudClient";
 const remote: RemoteEvents = {
   async push(events, owner) {
     if (!cloud) throw new Error("尚未配置云服务。");
@@ -47,11 +47,38 @@ const remote: RemoteEvents = {
   },
 };
 let running: Promise<number> | null = null;
+let rerun = false;
+function publishSyncState(state: "syncing" | "synced" | "error", message = "") {
+  if (typeof window !== "undefined")
+    window.dispatchEvent(
+      new CustomEvent("vocabulary-sync-state", { detail: { state, message } }),
+    );
+}
 export function synchronizeCloud(): Promise<number> {
-  if (running) return running;
-  running = performSync().finally(() => {
-    running = null;
-  });
+  if (running) {
+    rerun = true;
+    return running;
+  }
+  running = (async () => {
+    publishSyncState("syncing");
+    let total = 0;
+    do {
+      rerun = false;
+      total += await performSync();
+    } while (rerun);
+    publishSyncState("synced");
+    return total;
+  })()
+    .catch((error) => {
+      publishSyncState(
+        "error",
+        error instanceof Error ? error.message : "同步失败，内容仍保存在本机。",
+      );
+      throw error;
+    })
+    .finally(() => {
+      running = null;
+    });
   return running;
 }
 async function performSync() {
@@ -73,6 +100,8 @@ async function performSync() {
       if (!e.owner) await db.reviews.update(e.id, { owner: user.id });
     }
   });
+  await seedMetadata(db);
+  await exchangeMetadata(db, user.id, remoteMetadata);
   const local = await db.reviews.toArray();
   const result = await syncEvents(local, user.id, remote);
   await db.transaction("rw", db.reviews, db.settings, async () => {

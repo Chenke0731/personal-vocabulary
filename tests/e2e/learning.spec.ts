@@ -240,3 +240,45 @@ test("large unreviewed packs stay searchable without rendering thousands of rows
     page.getByRole("heading", { name: "fixtureword999", exact: true }),
   ).toBeVisible();
 });
+test("backs up offline preference edits including a canceled favorite", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "30分钟", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "30分钟", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await page
+    .getByRole("navigation", { name: "手机导航" })
+    .getByRole("button", { name: "词库", exact: true })
+    .click();
+  await page.getByLabel("搜索单词或释义").fill("address");
+  const favorite = page.getByLabel("收藏 address", { exact: true });
+  await favorite.click();
+  await expect(favorite).toHaveText("★");
+  await favorite.click();
+  await expect(favorite).toHaveText("☆");
+  await page
+    .getByRole("navigation", { name: "手机导航" })
+    .getByRole("button", { name: "我的", exact: true })
+    .click();
+  const next = page.waitForEvent("download");
+  await page.getByRole("button", { name: "导出备份" }).click();
+  const file = await next;
+  const stream = await file.createReadStream();
+  if (!stream) throw Error("No backup");
+  let text = "";
+  for await (const chunk of stream) text += chunk.toString();
+  const backup = JSON.parse(text);
+  expect(
+    backup.metadata.some(
+      (c: { kind: string; value: unknown }) =>
+        c.kind === "budget" && c.value === 30,
+    ),
+  ).toBe(true);
+  expect(
+    backup.metadata
+      .filter((c: { kind: string }) => c.kind === "favorite")
+      .map((c: { value: boolean }) => c.value),
+  ).toEqual([true, false]);
+});

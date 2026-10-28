@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { parseWordPack, mergePoints } from "./content";
-import { db } from "./store";
+import { saveSetting } from "./store";
 import type { Point } from "./model";
 export default function ImportPanel({
   points,
@@ -33,7 +33,7 @@ export default function ImportPanel({
     setBusy(true);
     try {
       const merged = mergePoints(points, preview);
-      await db.settings.put({ key: "points", value: merged });
+      await saveSetting({ key: "points", value: merged });
       await onImported();
       setMessage(`已合并 ${preview.length} 个知识点，共 ${merged.length} 个。`);
       setPreview(null);

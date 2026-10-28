@@ -2,18 +2,35 @@ import Dexie, { type Table } from "dexie";
 import { isPoint, type Review, type Setting, type Point } from "./model";
 import { mergePoints } from "./content";
 import { effectiveReviews } from "./reviewHistory";
+import {
+  putSetting,
+  isMetadataChange,
+  restoreMetadataOutbox,
+  type MetadataChange,
+} from "./metadata";
 export class VocabularyDB extends Dexie {
   reviews!: Table<Review, string>;
   settings!: Table<Setting, string>;
+  changes!: Table<MetadataChange, string>;
   constructor(name = "cijian-v1") {
     super(name);
     this.version(1).stores({
       reviews: "id,pointId,day,owner",
       settings: "key",
     });
+    this.version(2).stores({
+      reviews: "id,pointId,day,owner",
+      settings: "key",
+      changes: "id,ordinal,kind,key,owner",
+    });
   }
 }
 export const db = new VocabularyDB();
+export async function saveSetting(setting: Setting) {
+  await putSetting(db, setting);
+  if (typeof window !== "undefined")
+    window.dispatchEvent(new Event("vocabulary-metadata-changed"));
+}
 export function isReview(x: unknown): x is Review {
   if (!x || typeof x !== "object") return false;
   const e = x as Review;
@@ -78,11 +95,14 @@ export async function saveReview(review: Review) {
   });
 }
 export async function exportBackup() {
-  return db.transaction("r", db.reviews, db.settings, async () => ({
+  return db.transaction("r", db.reviews, db.settings, db.changes, async () => ({
     format: "vocabulary-backup",
     version: 1,
     createdAt: new Date().toISOString(),
     reviews: await db.reviews.toArray(),
+    metadata: (await db.changes.orderBy("ordinal").toArray()).filter(
+      (c) => c.pending,
+    ),
     settings: (await db.settings.toArray()).filter(isSetting),
   }));
 }
@@ -92,6 +112,7 @@ export async function restoreBackup(input: unknown) {
     version?: unknown;
     reviews?: unknown;
     settings?: unknown;
+    metadata?: unknown;
   };
   if (
     !b ||
@@ -100,12 +121,31 @@ export async function restoreBackup(input: unknown) {
     !Array.isArray(b.reviews) ||
     !b.reviews.every(isReview) ||
     !Array.isArray(b.settings) ||
-    !b.settings.every(isSetting)
+    !b.settings.every(isSetting) ||
+    (b.metadata !== undefined &&
+      (!Array.isArray(b.metadata) || !b.metadata.every(isMetadataChange)))
   )
     throw new Error("备份格式或内容无效，本机记录未改变。");
   const reviews = b.reviews as Review[],
     settings = b.settings as Setting[];
-  await db.transaction("rw", db.reviews, db.settings, async () => {
+  await db.transaction("rw", db.reviews, db.settings, db.changes, async () => {
+    const existingBudget = await db.settings.get("budget");
+    const existingFavorites = (await db.settings.get("favorites"))?.value;
+    const retainedFavorites = new Set(
+      Array.isArray(existingFavorites) ? (existingFavorites as string[]) : [],
+    );
+    // Backup restore preserves the current budget and unions favorites. Do not
+    // reintroduce contrary old intent into the next cloud upload.
+    const restoredChanges = ((b.metadata ?? []) as MetadataChange[]).filter(
+      (c) =>
+        !(c.kind === "budget" && existingBudget) &&
+        !(
+          c.kind === "favorite" &&
+          c.value === false &&
+          retainedFavorites.has(c.key)
+        ),
+    );
+    await restoreMetadataOutbox(db, restoredChanges);
     effectiveReviews([...(await db.reviews.toArray()), ...reviews]);
     for (const review of reviews)
       if (!(await db.reviews.get(review.id)))
@@ -113,7 +153,7 @@ export async function restoreBackup(input: unknown) {
     for (const setting of settings) {
       const old = await db.settings.get(setting.key);
       if (setting.key.startsWith("allocated:") || setting.key === "favorites")
-        await db.settings.put({
+        await putSetting(db, {
           key: setting.key,
           value: [
             ...new Set([
@@ -123,14 +163,14 @@ export async function restoreBackup(input: unknown) {
           ],
         });
       else if (setting.key === "points")
-        await db.settings.put({
+        await putSetting(db, {
           key: "points",
           value: mergePoints(
             Array.isArray(old?.value) ? (old.value as Point[]) : [],
             setting.value as Point[],
           ),
         });
-      else if (!old) await db.settings.put(setting);
+      else if (!old) await putSetting(db, setting);
     }
   });
 }

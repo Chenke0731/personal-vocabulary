@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import type { Point, Review, Book, Rating } from "./model";
 import { bookNames } from "./model";
 import StudyCard from "./StudyCard";
+import { mergePoints } from "./content";
 import type { Ability } from "./model";
 import { makeExercise } from "./exercises";
 import { demoPoints } from "./demo";
@@ -12,7 +13,13 @@ import { newPointTarget } from "./budget";
 import ImportPanel from "./ImportPanel";
 import WordEditor from "./WordEditor";
 import { cloud, synchronizeCloud } from "./cloud";
-import { db, saveReview, exportBackup, restoreBackup } from "./store";
+import {
+  db,
+  saveReview,
+  exportBackup,
+  restoreBackup,
+  saveSetting,
+} from "./store";
 import { makeQueue, deriveCard, learningDay } from "./scheduler";
 
 type Page = "today" | "library" | "weak" | "settings";
@@ -42,6 +49,7 @@ export default function App() {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [finished, setFinished] = useState(0);
   const [online, setOnline] = useState(navigator.onLine);
+  const [syncStatus, setSyncStatus] = useState({ state: "local", message: "" });
   const clock = useSessionClock(!!queue?.length);
   const answerStart = useRef(0);
   const submitId = useRef(crypto.randomUUID());
@@ -51,12 +59,22 @@ export default function App() {
     const s = await db.settings.toArray();
     setReviews(r);
     const value = (key: string) => s.find((x) => x.key === key)?.value;
-    if (Array.isArray(value("points"))) setPoints(value("points") as Point[]);
-    if (value("budget") === 30) setBudget(30);
+    if (Array.isArray(value("points")))
+      setPoints(mergePoints(demoPoints, value("points") as Point[]));
+    if (value("budget") === 30 || value("budget") === 15)
+      setBudget(value("budget") as number);
     if (Array.isArray(value("favorites")))
       setFavorites(value("favorites") as string[]);
     setReady(true);
   }
+  useEffect(() => {
+    const observe = (event: Event) =>
+      setSyncStatus(
+        (event as CustomEvent<{ state: string; message: string }>).detail,
+      );
+    window.addEventListener("vocabulary-sync-state", observe);
+    return () => window.removeEventListener("vocabulary-sync-state", observe);
+  }, []);
   useEffect(() => {
     const sync = () => {
       if (cloud && document.visibilityState === "visible")
@@ -65,10 +83,12 @@ export default function App() {
           .catch(() => {});
     };
     window.addEventListener("online", sync);
+    window.addEventListener("vocabulary-metadata-changed", sync);
     document.addEventListener("visibilitychange", sync);
     sync();
     return () => {
       window.removeEventListener("online", sync);
+      window.removeEventListener("vocabulary-metadata-changed", sync);
       document.removeEventListener("visibilitychange", sync);
     };
   }, []);
@@ -116,7 +136,7 @@ export default function App() {
       const newIds = next
         .filter((p) => !reviews.some((r) => r.pointId === p.id))
         .map((p) => p.id);
-      await db.settings.put({
+      await saveSetting({
         key: `allocated:${day}`,
         value: [...new Set([...done, ...newIds])],
       });
@@ -170,7 +190,7 @@ export default function App() {
       ? favorites.filter((x) => x !== id)
       : [...favorites, id];
     try {
-      await db.settings.put({ key: "favorites", value: next });
+      await saveSetting({ key: "favorites", value: next });
       setFavorites(next);
     } catch {
       setError("收藏未能保存，请重试。");
@@ -195,7 +215,7 @@ export default function App() {
       )
         throw new Error("练习ID冲突");
       const merged = existing ? points : [...points, selected];
-      await db.settings.put({ key: "points", value: merged });
+      await saveSetting({ key: "points", value: merged });
       setPoints(merged);
       setQueue([selected]);
       setFinished(0);
@@ -240,6 +260,7 @@ export default function App() {
     try {
       const value = JSON.parse(await file.text());
       await restoreBackup(value);
+      window.dispatchEvent(new Event("vocabulary-metadata-changed"));
       await refresh();
       setQueue(null);
       setMessage("备份已合并，重复记录不会重复计数。");
@@ -317,9 +338,20 @@ export default function App() {
             </span>
             <p>六级提分 / 考研强化 / 雅思补充</p>
           </div>
-          <span className={`status ${online ? "" : "offline"}`}>
+          <span
+            className={`status ${online && syncStatus.state !== "error" ? "" : "offline"}`}
+            title={syncStatus.message}
+          >
             <i />
-            {online ? "本地保存" : "离线可学"}
+            {!online
+              ? "离线可学"
+              : syncStatus.state === "syncing"
+                ? "正在同步"
+                : syncStatus.state === "synced"
+                  ? "已同步"
+                  : syncStatus.state === "error"
+                    ? "同步需处理"
+                    : "本地保存"}
           </span>
         </header>
         {error && (
@@ -362,7 +394,7 @@ export default function App() {
                           aria-pressed={budget === n}
                           onClick={async () => {
                             try {
-                              await db.settings.put({
+                              await saveSetting({
                                 key: "budget",
                                 value: n,
                               });

@@ -38,3 +38,13 @@ describe("cloud event exchange", () => {
     ).rejects.toThrow();
   });
 });
+it("rejects cyclic cloud reviews before returning them to storage", async () => {
+  const first = { ...event, id: "a", base: "b" },
+    second = { ...event, id: "b", base: "a" };
+  await expect(
+    syncEvents([], "u", {
+      push: async () => {},
+      pull: async () => [first, second],
+    }),
+  ).rejects.toThrow();
+});

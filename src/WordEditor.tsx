@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { Point } from "./model";
-import { db } from "./store";
+import { saveSetting } from "./store";
 import { mergePoints, independentSense } from "./content";
 export default function WordEditor({
   point,
@@ -36,7 +36,7 @@ export default function WordEditor({
         reviewed: true,
         source: (point.source ?? "个人添加") + "；义项由用户校对",
       };
-      await db.settings.put({
+      await saveSetting({
         key: "points",
         value: mergePoints(points, [updated]),
       });

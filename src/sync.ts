@@ -1,5 +1,6 @@
 import type { Review } from "./model";
 import { isReview } from "./store";
+import { effectiveReviews } from "./reviewHistory";
 export interface RemoteEvents {
   push: (events: Review[], owner: string) => Promise<void>;
   pull: (owner: string) => Promise<Review[]>;
@@ -16,6 +17,9 @@ export async function syncEvents(
   const received = await remote.pull(owner);
   if (!received.every(isReview))
     throw new Error("云端数据格式不正确，本机记录未被覆盖。");
+  if (received.some((e) => e.owner && e.owner !== owner))
+    throw new Error("云端记录所属账号不一致。");
+  effectiveReviews([...local, ...received]);
   return {
     acknowledged: pending.map((e) => e.id),
     received: [
