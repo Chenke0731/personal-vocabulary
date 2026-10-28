@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cloud, synchronizeCloud } from "./cloud";
 export default function CloudPanel({
   onSynced,
@@ -10,6 +10,7 @@ export default function CloudPanel({
   onRecoveryDone: () => void;
 }) {
   const [email, setEmail] = useState("");
+  const emailInput = useRef<HTMLInputElement>(null);
   const [password, setPassword] = useState("");
   const [user, setUser] = useState("");
   const [busy, setBusy] = useState(false);
@@ -59,12 +60,16 @@ export default function CloudPanel({
     }
   }
   async function requestReset() {
-    if (!cloud || !email.trim()) { setMessage("请先填写邮箱。 "); return; }
+    if (!cloud) return;
+    if (!email.trim() || !emailInput.current?.validity.valid) {
+      setMessage("请输入有效的邮箱地址。");
+      return;
+    }
     setBusy(true);
     try {
       const { error } = await cloud.auth.resetPasswordForEmail(email.trim(), { redirectTo: window.location.origin + window.location.pathname });
       if (error) throw error;
-      setMessage("如果邮箱已注册，重置邮件将发送至该邮箱，请检查收件箱。 ");
+      setMessage("请求已提交。如果邮箱已注册且邮件服务正常，请检查收件箱。");
     } catch {
       setMessage("重置请求未能发送，请检查网络或稍后重试。 ");
     } finally { setBusy(false); }
@@ -141,6 +146,7 @@ export default function CloudPanel({
             <input
               required
               type="email"
+              ref={emailInput}
               autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}

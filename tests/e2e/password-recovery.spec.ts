@@ -57,3 +57,11 @@ test("sign out reports an error without claiming success and allows retry", asyn
   await expect(page.getByRole("status")).toContainText("已退出");
   await expect(page.getByLabel("邮箱")).toBeVisible();
 });
+
+test("rejects an invalid recovery email before contacting auth", async ({ page }) => {
+  await page.getByRole("navigation", { name: "手机导航" }).getByRole("button", { name: "我的", exact: true }).click();
+  await page.getByLabel("邮箱").fill("not-an-email");
+  await page.getByRole("button", { name: "忘记密码" }).click();
+  await expect(page.getByRole("status")).toContainText("请输入有效的邮箱地址");
+  expect(await page.evaluate(() => (window as any).fakeAuth.requests.length)).toBe(0);
+});
