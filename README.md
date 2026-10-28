@@ -80,7 +80,7 @@ node scripts/prepare-candidates.mjs
 
 ## 原创学术词汇练习包
 
-“我的 → 下载原创学术词汇练习包”提供 6 个知识点；下载后通过“导入个人词包”选择文件并确认。重复导入按 ID 合并，不增加重复条目。内容为本项目原创中文释义和例句，考试标签仅作为学习方向，不代表正版教材或官方大纲的逐条对应。词形在本地三份社区候选列表中出现，但候选列表不代表教材完整性。
+“我的 → 预览原创学术词汇练习包”提供 6 个知识点，确认后即可导入；也可下载 JSON 后通过“导入个人词包”选择文件。首次在线加载生产版本并完成缓存后，预览和导入可离线使用。重复导入按 ID 合并，不增加重复条目。内容为本项目原创中文释义和例句，考试标签仅作为学习方向，不代表正版教材或官方大纲的逐条对应。词形在本地三份社区候选列表中出现，但候选列表不代表教材完整性。
 
 义项核对参考：[assess](https://dictionary.cambridge.org/dictionary/english/assess)、[evaluate](https://dictionary.cambridge.org/dictionary/english/evaluate)、[assume](https://dictionary.cambridge.org/dictionary/english/assume)、[sufficient](https://dictionary.cambridge.org/dictionary/english/sufficient)、[interpret](https://dictionary.cambridge.org/dictionary/english/interpret)、[derive](https://dictionary.cambridge.org/dictionary/english/derive)。例句及译文由本项目编写。
 

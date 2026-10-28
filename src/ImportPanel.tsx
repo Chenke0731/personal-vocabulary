@@ -28,6 +28,20 @@ export default function ImportPanel({
     }
     if (input.current) input.current.value = "";
   }
+  async function previewAcademicPack() {
+    setBusy(true);
+    setMessage("");
+    setPreview(null);
+    try {
+      const response = await fetch("/wordpacks/core-academic-01.json");
+      if (!response.ok) throw new Error("词包读取失败");
+      await read(new File([await response.blob()], "core-academic-01.json", { type: "application/json" }));
+    } catch {
+      setMessage("无法读取练习词包，请联网后重试。");
+    } finally {
+      setBusy(false);
+    }
+  }
   async function confirm() {
     if (!preview) return;
     setBusy(true);
@@ -52,6 +66,9 @@ export default function ImportPanel({
       <p className="muted">
         当前不支持直接导入PDF或社区原始JSON。格式示例见项目
         public/example-wordpack.json。
+      </p>
+      <p>
+        <button className="secondary" disabled={busy} onClick={previewAcademicPack}>预览原创学术词汇练习包</button>
       </p>
       <p>
         <a href="/wordpacks/core-academic-01.json" download>下载原创学术词汇练习包（6个知识点）</a>

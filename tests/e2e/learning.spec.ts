@@ -315,3 +315,16 @@ test("downloads and imports the original academic practice pack without duplicat
   await page.getByRole("button", { name: "查看答案" }).click();
   await expect(page.getByRole("heading", { name: "评价；评估" })).toBeVisible();
 });
+
+test("previews and imports the academic pack after going offline", async ({ page, context }) => {
+  await page.goto("/");
+  await page.evaluate(async () => { await navigator.serviceWorker.ready; });
+  await page.reload();
+  await context.setOffline(true);
+  await page.reload();
+  await page.getByRole("navigation", { name: "手机导航" }).getByRole("button", { name: "我的", exact: true }).click();
+  await page.getByRole("button", { name: "预览原创学术词汇练习包" }).click();
+  await expect(page.getByText("有效知识点 6 个", { exact: false })).toBeVisible();
+  await page.getByRole("button", { name: "确认合并" }).click();
+  await expect(page.getByRole("status")).toContainText("共 30 个");
+});
