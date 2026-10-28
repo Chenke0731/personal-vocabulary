@@ -66,6 +66,25 @@ describe("third original academic pack", () => {
     expect(new Set(pack.map((p) => p.id)).size).toBe(6);
   });
 });
+describe("fourth original academic pack", () => {
+  it("parses as six reviewed original practice points, not a textbook copy", () => {
+    const pack = parseWordPack(
+      JSON.parse(readFileSync("public/wordpacks/core-academic-04.json", "utf-8")),
+    );
+    expect(pack).toHaveLength(6);
+    expect(pack.map((p) => p.word)).toEqual([
+      "accurate",
+      "adequate",
+      "arrange",
+      "aspect",
+      "concern",
+      "conclude",
+    ]);
+    expect(pack.every((p) => p.reviewed)).toBe(true);
+    expect(pack.every((p) => p.source?.includes("考试标签不代表原书收录确认"))).toBe(true);
+    expect(new Set(pack.map((p) => p.id)).size).toBe(6);
+  });
+});
 describe("re-import preserves user-edited definitions", () => {
   const userEdited = {
     id: "assess-meaning",

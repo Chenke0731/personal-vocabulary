@@ -2,6 +2,11 @@
 
 更新：2026-10-28。开发分支：codex/vocabulary-app。
 
+## 第四组扩充（2026-10-28，Muse 继续开发，未推送）
+
+- 新增第四组原创学术词汇练习包 public/wordpacks/core-academic-04.json，共 6 个知识点（accurate、adequate、arrange、aspect、concern、conclude），均为三份社区候选拼写列表的交集词形（红宝书 4770、六级 2345、雅思 3697 不同拼写），且不在演示内容和前三组中；义项和例句为本项目原创，每词只取一个核心义项，音标与音频尚未接入，不冒充原书完整版，不发布公开下载入口，不推断出版社授权。ImportPanel 新增第四组预览入口，README 已同步说明，tests/content.test.ts 新增第四组解析回归测试。
+- 本轮实际验证：npm test 67/67 通过（15 个测试文件，上轮 66 项，新增第四组解析测试 1 项）；npm run build 通过，TypeScript + Vite，83 个模块；端到端因本机缺 Chrome 仍未跑通，不得冒充之前的结果。真实云同步、完整释义/音标/音频、作答撤销等仍未完成。本轮改动尚未推送 GitHub，推送前需核对 diff。
+
 ## 本次接手（2026-10-28，Muse 继续开发，非 Codex 桌面端）
 
 - 基线验证：npm ci 通过；npm test 60/60 通过；npm run build 通过。端到端在本机未跑通，原因仅是本机缺少 Chrome（/opt/google/chrome/chrome 不存在），Playwright 下载亦超时，不是代码测试失败，不得把此前 Codex 桌面端的端到端结果冒充为本次结果。
