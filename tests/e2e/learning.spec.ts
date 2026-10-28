@@ -294,3 +294,24 @@ test("backs up offline preference edits including a canceled favorite", async ({
       .map((c: { value: boolean }) => c.value),
   ).toEqual([true, false]);
 });
+
+test("downloads and imports the original academic practice pack without duplicates", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("navigation", { name: "手机导航" }).getByRole("button", { name: "我的", exact: true }).click();
+  const pending = page.waitForEvent("download");
+  await page.getByRole("link", { name: "下载原创学术词汇练习包（6个知识点）" }).click();
+  const download = await pending;
+  const path = await download.path();
+  if (!path) throw new Error("Word pack download failed");
+  for (let i = 0; i < 2; i++) {
+    await page.getByLabel("选择词包文件").setInputFiles(path);
+    await expect(page.getByText("有效知识点 6 个", { exact: false })).toBeVisible();
+    await page.getByRole("button", { name: "确认合并" }).click();
+    await expect(page.getByRole("status")).toContainText("共 30 个");
+  }
+  await page.getByRole("navigation", { name: "手机导航" }).getByRole("button", { name: "词库", exact: true }).click();
+  await page.getByLabel("搜索单词或释义").fill("evaluate");
+  await page.getByLabel("练习方式 evaluate").selectOption("meaning");
+  await page.getByRole("button", { name: "查看答案" }).click();
+  await expect(page.getByRole("heading", { name: "评价；评估" })).toBeVisible();
+});

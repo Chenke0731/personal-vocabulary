@@ -78,6 +78,12 @@ node scripts/prepare-candidates.mjs
 
 2026-10-28抓取观察：红宝书4770个不同拼写、六级2345个、雅思3697个（包含同条目中的拼写变体）。这些数字不是官方全书词数；词表完整性、版本对应和校对仍需继续核实。
 
+## 原创学术词汇练习包
+
+“我的 → 下载原创学术词汇练习包”提供 6 个知识点；下载后通过“导入个人词包”选择文件并确认。重复导入按 ID 合并，不增加重复条目。内容为本项目原创中文释义和例句，考试标签仅作为学习方向，不代表正版教材或官方大纲的逐条对应。词形在本地三份社区候选列表中出现，但候选列表不代表教材完整性。
+
+义项核对参考：[assess](https://dictionary.cambridge.org/dictionary/english/assess)、[evaluate](https://dictionary.cambridge.org/dictionary/english/evaluate)、[assume](https://dictionary.cambridge.org/dictionary/english/assume)、[sufficient](https://dictionary.cambridge.org/dictionary/english/sufficient)、[interpret](https://dictionary.cambridge.org/dictionary/english/interpret)、[derive](https://dictionary.cambridge.org/dictionary/english/derive)。例句及译文由本项目编写。
+
 ## 起点抽查与时间预算
 
 起点抽查从已核对的认义内容中取最多24项，加入少量听辨和拼写，支持中途保存。结果只说明样本表现，与正式复习记录分开。演示内容未做难度分层，不能据此给出考试成绩或CEFR等级。

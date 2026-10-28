@@ -1,0 +1,96 @@
+{
+  "format": "cijian-wordpack",
+  "version": 1,
+  "points": [
+    {
+      "id": "original:core:assess:meaning",
+      "word": "assess",
+      "meaning": "评估；判断",
+      "example": "We need to assess our progress before changing the plan.",
+      "translation": "改变计划前，我们需要评估自己的进展。",
+      "books": [
+        "cet6",
+        "postgraduate",
+        "ielts"
+      ],
+      "ability": "meaning",
+      "reviewed": true,
+      "source": "原创练习义项及例句；候选拼写交叉核对，考试标签不代表原书收录确认"
+    },
+    {
+      "id": "original:core:evaluate:meaning",
+      "word": "evaluate",
+      "meaning": "评价；评估",
+      "example": "The team will evaluate the results next week.",
+      "translation": "团队将在下周评估这些结果。",
+      "books": [
+        "cet6",
+        "postgraduate",
+        "ielts"
+      ],
+      "ability": "meaning",
+      "reviewed": true,
+      "source": "原创练习义项及例句；候选拼写交叉核对，考试标签不代表原书收录确认"
+    },
+    {
+      "id": "original:core:assume:meaning",
+      "word": "assume",
+      "meaning": "假定；认为",
+      "example": "Do not assume that every example has only one meaning.",
+      "translation": "不要假定每个例子只有一种含义。",
+      "books": [
+        "cet6",
+        "postgraduate",
+        "ielts"
+      ],
+      "ability": "meaning",
+      "reviewed": true,
+      "source": "原创练习义项及例句；候选拼写交叉核对，考试标签不代表原书收录确认"
+    },
+    {
+      "id": "original:core:sufficient:meaning",
+      "word": "sufficient",
+      "meaning": "足够的；充足的",
+      "example": "Ten minutes may be sufficient for a short review.",
+      "translation": "十分钟可能足够进行一次简短复习。",
+      "books": [
+        "cet6",
+        "postgraduate",
+        "ielts"
+      ],
+      "ability": "meaning",
+      "reviewed": true,
+      "source": "原创练习义项及例句；候选拼写交叉核对，考试标签不代表原书收录确认"
+    },
+    {
+      "id": "original:core:interpret:meaning",
+      "word": "interpret",
+      "meaning": "解释；理解",
+      "example": "Readers may interpret the same sentence differently.",
+      "translation": "读者可能对同一个句子有不同的理解。",
+      "books": [
+        "cet6",
+        "postgraduate",
+        "ielts"
+      ],
+      "ability": "meaning",
+      "reviewed": true,
+      "source": "原创练习义项及例句；候选拼写交叉核对，考试标签不代表原书收录确认"
+    },
+    {
+      "id": "original:core:derive:meaning",
+      "word": "derive",
+      "meaning": "从……得到；获得",
+      "example": "Students can derive useful ideas from discussion.",
+      "translation": "学生可以从讨论中获得有用的想法。",
+      "books": [
+        "cet6",
+        "postgraduate",
+        "ielts"
+      ],
+      "ability": "meaning",
+      "reviewed": true,
+      "source": "原创练习义项及例句；候选拼写交叉核对，考试标签不代表原书收录确认"
+    }
+  ]
+}

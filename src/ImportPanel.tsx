@@ -53,6 +53,9 @@ export default function ImportPanel({
         当前不支持直接导入PDF或社区原始JSON。格式示例见项目
         public/example-wordpack.json。
       </p>
+      <p>
+        <a href="/wordpacks/core-academic-01.json" download>下载原创学术词汇练习包（6个知识点）</a>
+      </p>
       <button className="secondary" onClick={() => input.current?.click()}>
         选择词包文件
       </button>
