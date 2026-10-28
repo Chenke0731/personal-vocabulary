@@ -105,6 +105,7 @@ test("assessment resumes independently and does not create review records", asyn
     .click();
   await page.getByRole("button", { name: "核对抽查答案" }).click();
   await page.getByRole("button", { name: "正确想起", exact: true }).click();
+  await expect(page.getByText("起点抽查 · 1 / 24")).toBeVisible();
   await page.reload();
   await page
     .getByRole("button", { name: "词汇起点抽查", exact: false })
@@ -127,20 +128,18 @@ test("respects a restored time budget and allows extending to 30 minutes", async
     month: "2-digit",
     day: "2-digit",
   }).format(new Date());
-  await page
-    .getByLabel("选择备份文件")
-    .setInputFiles({
-      name: "time.json",
-      mimeType: "application/json",
-      buffer: Buffer.from(
-        JSON.stringify({
-          format: "vocabulary-backup",
-          version: 1,
-          reviews: [],
-          settings: [{ key: "session:" + day, value: 900 }],
-        }),
-      ),
-    });
+  await page.getByLabel("选择备份文件").setInputFiles({
+    name: "time.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(
+      JSON.stringify({
+        format: "vocabulary-backup",
+        version: 1,
+        reviews: [],
+        settings: [{ key: "session:" + day, value: 900 }],
+      }),
+    ),
+  });
   await page
     .getByRole("navigation", { name: "手机导航" })
     .getByRole("button", { name: "今日", exact: true })
@@ -174,19 +173,17 @@ test("unreviewed words require explicit checking before they can be practiced", 
     reviewed: false,
     source: "测试来源",
   };
-  await page
-    .getByLabel("选择词包文件")
-    .setInputFiles({
-      name: "candidate.json",
-      mimeType: "application/json",
-      buffer: Buffer.from(
-        JSON.stringify({
-          format: "cijian-wordpack",
-          version: 1,
-          points: [point],
-        }),
-      ),
-    });
+  await page.getByLabel("选择词包文件").setInputFiles({
+    name: "candidate.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(
+      JSON.stringify({
+        format: "cijian-wordpack",
+        version: 1,
+        points: [point],
+      }),
+    ),
+  });
   await page.getByRole("button", { name: "确认合并" }).click();
   await page
     .getByRole("navigation", { name: "手机导航" })
@@ -224,15 +221,13 @@ test("large unreviewed packs stay searchable without rendering thousands of rows
     ability: "meaning",
     reviewed: false,
   }));
-  await page
-    .getByLabel("选择词包文件")
-    .setInputFiles({
-      name: "large.json",
-      mimeType: "application/json",
-      buffer: Buffer.from(
-        JSON.stringify({ format: "cijian-wordpack", version: 1, points }),
-      ),
-    });
+  await page.getByLabel("选择词包文件").setInputFiles({
+    name: "large.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(
+      JSON.stringify({ format: "cijian-wordpack", version: 1, points }),
+    ),
+  });
   await page.getByRole("button", { name: "确认合并" }).click();
   await expect(page.getByRole("status")).toContainText("共 1024 个");
   await page
