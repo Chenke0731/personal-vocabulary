@@ -11,6 +11,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - name: Validate tooling backup recovery
+        run: |
+          python3 tooling-backup/test_restore.py
+          python3 tooling-backup/restore.py --target "$RUNNER_TEMP/tooling-check" --dry-run --plugin-sources --system-skills
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e

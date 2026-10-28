@@ -6,3 +6,7 @@ dist/
 playwright-report/
 test-results/
 .local-wordpacks/
+
+.agents/skills/
+.codex-plugin-snapshots/
+**/__pycache__/
