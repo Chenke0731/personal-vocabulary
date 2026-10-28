@@ -32,7 +32,7 @@ export default function StudyCard({
         aria-label={favorite ? "取消收藏" : "收藏单词"}
         onClick={onFavorite}
       >
-        ☆
+        {favorite ? "★" : "☆"}
       </button>
       <h1 lang={point.ability === "meaning" || reveal ? "en" : "zh-CN"}>
         {reveal || point.ability === "meaning"
@@ -43,6 +43,9 @@ export default function StudyCard({
               ? "拼写回忆"
               : "语境填词"}
       </h1>
+      {point.phonetic && (point.ability === "meaning" || reveal) && (
+        <p lang="en">{point.phonetic}</p>
+      )}
       {(point.ability === "meaning" ||
         point.ability === "listening" ||
         reveal) && (

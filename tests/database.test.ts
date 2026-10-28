@@ -82,3 +82,7 @@ it("denies anonymous reads of private data", async () => {
   await pg.exec("reset role;set role anon;");
   await expect(pg.query("select * from private_metadata")).rejects.toThrow();
 });
+it("rejects review payloads with a null ID", async () => {
+  const review = { id: null, pointId: "point", base: "new", at: "2026-10-28T00:00:00Z", day: "2026-10-28", rating: 3 };
+  await expect(pg.query("insert into review_events(user_id,id,payload) values($1,$2,$3)", [A, "event", JSON.stringify(review)])).rejects.toThrow();
+});

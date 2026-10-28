@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { speakWord } from "./speech";
 import type { Point, Review, Book, Rating } from "./model";
 import { bookNames } from "./model";
 import StudyCard from "./StudyCard";
@@ -31,6 +32,19 @@ const nav: [Page, string, string][] = [
 ];
 export default function App() {
   const [page, setPage] = useState<Page>("today");
+  const [recovering, setRecovering] = useState(() => sessionStorage.getItem("password-recovery") === "1");
+  useEffect(() => {
+    if (!cloud) return;
+    const { data } = cloud.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") {
+        sessionStorage.setItem("password-recovery", "1");
+        setRecovering(true);
+        setPage("settings");
+      }
+    });
+    if (sessionStorage.getItem("password-recovery") === "1") setPage("settings");
+    return () => data.subscription.unsubscribe();
+  }, []);
   const [assessing, setAssessing] = useState(false);
   const [points, setPoints] = useState<Point[]>(demoPoints);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -228,15 +242,7 @@ export default function App() {
     }
   }
   function speak(word: string) {
-    if (!("speechSynthesis" in window)) {
-      setError("当前浏览器不支持朗读。");
-      return;
-    }
-    speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(word);
-    utterance.lang = "en-GB";
-    utterance.rate = 0.85;
-    speechSynthesis.speak(utterance);
+    speakWord(word, () => setError("朗读失败，请检查设备语音服务或稍后重试。"), 0.85);
   }
   async function backup() {
     try {
@@ -684,7 +690,7 @@ export default function App() {
               <h1>为自己，留住进步。</h1>
               <p>管理学习记录与数据备份。</p>
             </div>
-            <CloudPanel onSynced={refresh} />
+            <CloudPanel onSynced={refresh} recovering={recovering} onRecoveryDone={() => { sessionStorage.removeItem("password-recovery"); setRecovering(false); }} />
             <ImportPanel points={points} onImported={refresh} />
             <section className="settings-section">
               <h2>备份与恢复</h2>

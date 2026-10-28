@@ -10,3 +10,11 @@ test-results/
 .agents/skills/
 .codex-plugin-snapshots/
 **/__pycache__/
+
+# Local deployment and private credentials
+.vercel/
+*.pem
+*.p12
+*.pfx
+*.key
+*.tmp

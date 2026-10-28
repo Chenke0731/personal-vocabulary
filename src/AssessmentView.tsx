@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { speakWord } from "./speech";
 import type { Point } from "./model";
 import { abilityNames } from "./model";
 import { db } from "./store";
@@ -66,14 +67,7 @@ export default function Assessment({
   const summary = assessmentSummary(state?.answers ?? []);
   function speak() {
     if (!p) return;
-    if (!("speechSynthesis" in window)) {
-      setError("当前设备无法朗读，可跳过听辨，此项不计分。");
-      return;
-    }
-    speechSynthesis.cancel();
-    const s = new SpeechSynthesisUtterance(p.word);
-    s.lang = "en-GB";
-    speechSynthesis.speak(s);
+    speakWord(p.word, () => setError("当前设备无法朗读，可跳过听辨，此项不计分。"));
   }
   async function skip() {
     if (!state || !p) return;

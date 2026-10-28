@@ -7,6 +7,8 @@ test("phone study persists a review across reload and can restore a backup twice
   await expect(
     page.getByRole("heading", { name: "address", exact: true }),
   ).toBeVisible();
+  await page.getByRole("button", { name: "收藏单词" }).click();
+  await expect(page.getByRole("button", { name: "取消收藏" })).toHaveText("★");
   await page.getByRole("button", { name: "查看答案", exact: true }).click();
   await page.getByRole("button", { name: "记得 回忆正确" }).click();
   await expect(
@@ -72,6 +74,16 @@ test("imports a word pack and keeps spelling separate from meaning", async ({
   await expect(page.getByRole("status")).toContainText("正确");
   await page.getByRole("button", { name: "记得 回忆正确" }).click();
   await expect(page.getByText("本次完成 1 项", { exact: false })).toBeVisible();
+});
+test("shows a supplied phonetic transcription on a meaning card", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("navigation", { name: "手机导航" }).getByRole("button", { name: "我的", exact: true }).click();
+  await page.getByLabel("选择词包文件").setInputFiles({ name: "phonetic.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify({ format: "cijian-wordpack", version: 1, points: [{ id: "test:phonetic", word: "exampleword", phonetic: "/test/", meaning: "示例", example: "An example.", translation: "一个例子。", books: ["cet6"], ability: "meaning", reviewed: true }] })) });
+  await page.getByRole("button", { name: "确认合并" }).click();
+  await page.getByRole("navigation", { name: "手机导航" }).getByRole("button", { name: "词库", exact: true }).click();
+  await page.getByLabel("搜索单词或释义").fill("exampleword");
+  await page.getByLabel("练习方式 exampleword").selectOption("meaning");
+  await expect(page.getByText("/test/", { exact: true })).toBeVisible();
 });
 test("works after a cached production shell goes offline", async ({
   page,

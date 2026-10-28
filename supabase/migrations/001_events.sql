@@ -6,7 +6,7 @@ create table if not exists public.review_events (
  payload jsonb not null,
  received_at timestamptz not null default now(),
  primary key(user_id,id),
- constraint payload_id_matches check(payload->>'id'=id),
+ constraint payload_id_matches check(coalesce(jsonb_typeof(payload->'id')='string' and payload->>'id'=id,false)),
  constraint payload_required_fields check (
   jsonb_typeof(payload)='object' and
   payload ?& array['id','pointId','base','at','day','rating'] and

@@ -2,14 +2,19 @@ import { useEffect, useState } from "react";
 import { cloud, synchronizeCloud } from "./cloud";
 export default function CloudPanel({
   onSynced,
+  recovering,
+  onRecoveryDone,
 }: {
   onSynced: () => Promise<void>;
+  recovering: boolean;
+  onRecoveryDone: () => void;
 }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   useEffect(() => {
     if (!cloud) return;
     cloud.auth
@@ -53,6 +58,31 @@ export default function CloudPanel({
       setBusy(false);
     }
   }
+  async function requestReset() {
+    if (!cloud || !email.trim()) { setMessage("请先填写邮箱。 "); return; }
+    setBusy(true);
+    try {
+      const { error } = await cloud.auth.resetPasswordForEmail(email.trim(), { redirectTo: window.location.origin + window.location.pathname });
+      if (error) throw error;
+      setMessage("如果邮箱已注册，重置邮件将发送至该邮箱，请检查收件箱。 ");
+    } catch {
+      setMessage("重置请求未能发送，请检查网络或稍后重试。 ");
+    } finally { setBusy(false); }
+  }
+  async function updatePassword(e: React.FormEvent) {
+    e.preventDefault();
+    if (!cloud) return;
+    setBusy(true);
+    try {
+      const { error } = await cloud.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      setNewPassword("");
+      onRecoveryDone();
+      setMessage("密码已更新。 ");
+    } catch {
+      setMessage("密码更新失败，请检查密码要求或重新请求重置邮件。 ");
+    } finally { setBusy(false); }
+  }
   return (
     <section className="settings-section">
       <h2>账号与云端同步</h2>
@@ -63,6 +93,13 @@ export default function CloudPanel({
             代码已提供接入入口；实际服务与双端同步尚未验证。配置步骤见项目README。
           </p>
         </>
+      ) : recovering ? (
+        <form onSubmit={updatePassword} className="cloud-form">
+          <p>请设置新密码。</p>
+          <label>新密码<input required minLength={6} type="password" autoComplete="new-password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} /></label>
+          <button className="primary" disabled={busy}>更新密码</button>
+          <button type="button" className="secondary" disabled={busy} onClick={() => { setNewPassword(""); onRecoveryDone(); }}>取消</button>
+        </form>
       ) : user ? (
         <>
           <p>已登录：{user}</p>
@@ -113,6 +150,7 @@ export default function CloudPanel({
           <button disabled={busy} className="primary">
             登录并关联本机记录
           </button>
+          <button type="button" disabled={busy} className="secondary" onClick={requestReset}>忘记密码</button>
         </form>
       )}
       {message && <p role="status">{message}</p>}
