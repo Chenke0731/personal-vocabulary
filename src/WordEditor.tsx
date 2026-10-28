@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Point } from "./model";
 import { db } from "./store";
-import { mergePoints } from "./content";
+import { mergePoints, independentSense } from "./content";
 export default function WordEditor({
   point,
   points,
@@ -24,10 +24,12 @@ export default function WordEditor({
     setBusy(true);
     try {
       const updated: Point = {
-        ...point,
-        id: newSense
-          ? "personal:" + crypto.randomUUID() + ":meaning"
-          : point.id,
+        ...(newSense
+          ? independentSense(
+              point,
+              "personal:" + crypto.randomUUID() + ":meaning",
+            )
+          : point),
         meaning: meaning.trim(),
         example: example.trim(),
         translation: translation.trim(),

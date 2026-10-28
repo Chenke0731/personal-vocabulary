@@ -1,5 +1,13 @@
 import { isPoint } from "./model";
 import type { Point } from "./model";
+export function independentSense(point: Point, id: string): Point {
+  const {
+    originId: _originId,
+    originAbility: _originAbility,
+    ...content
+  } = point;
+  return { ...content, id, ability: "meaning" };
+}
 export function parseWordPack(input: unknown): Point[] {
   const p = input as { format?: unknown; version?: unknown; points?: unknown };
   if (

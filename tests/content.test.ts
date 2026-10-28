@@ -61,3 +61,22 @@ it("rejects nontext optional metadata before it can reach React", () => {
   };
   expect(isPoint(p)).toBe(false);
 });
+import { independentSense } from "../src/content";
+import { makeExercise } from "../src/exercises";
+it("new senses copied from a derived exercise have independent history", () => {
+  const p = {
+    id: "original::spelling",
+    originId: "original",
+    originAbility: "meaning" as const,
+    word: "address",
+    meaning: "地址",
+    example: "",
+    translation: "",
+    books: ["cet6"] as import("../src/model").Book[],
+    ability: "spelling" as const,
+    reviewed: true,
+  };
+  const fresh = independentSense(p, "personal-new");
+  expect(makeExercise(fresh, "meaning").id).toBe("personal-new");
+  expect(makeExercise(fresh, "spelling").id).not.toBe(p.id);
+});
