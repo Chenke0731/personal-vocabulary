@@ -1,0 +1,96 @@
+{
+  "format": "cijian-wordpack",
+  "version": 1,
+  "points": [
+    {
+      "id": "original:core:evidence:meaning",
+      "word": "evidence",
+      "meaning": "证据；根据",
+      "example": "The report provides evidence for its main claim.",
+      "translation": "这份报告为其主要观点提供了证据。",
+      "books": [
+        "cet6",
+        "postgraduate",
+        "ielts"
+      ],
+      "ability": "meaning",
+      "reviewed": true,
+      "source": "原创练习义项及例句；候选拼写交叉核对，考试标签不代表原书收录确认"
+    },
+    {
+      "id": "original:core:approach:meaning",
+      "word": "approach",
+      "meaning": "处理；应对",
+      "example": "We can approach the question from several angles.",
+      "translation": "我们可以从多个角度处理这个问题。",
+      "books": [
+        "cet6",
+        "postgraduate",
+        "ielts"
+      ],
+      "ability": "meaning",
+      "reviewed": true,
+      "source": "原创练习义项及例句；候选拼写交叉核对，考试标签不代表原书收录确认"
+    },
+    {
+      "id": "original:core:adapt:meaning",
+      "word": "adapt",
+      "meaning": "适应；调整",
+      "example": "Students can adapt their study plans when their schedules change.",
+      "translation": "学生可以在日程改变时调整学习计划。",
+      "books": [
+        "cet6",
+        "postgraduate",
+        "ielts"
+      ],
+      "ability": "meaning",
+      "reviewed": true,
+      "source": "原创练习义项及例句；候选拼写交叉核对，考试标签不代表原书收录确认"
+    },
+    {
+      "id": "original:core:establish:meaning",
+      "word": "establish",
+      "meaning": "建立；确立",
+      "example": "The group established a regular review routine.",
+      "translation": "小组建立了定期复习的习惯。",
+      "books": [
+        "cet6",
+        "postgraduate",
+        "ielts"
+      ],
+      "ability": "meaning",
+      "reviewed": true,
+      "source": "原创练习义项及例句；候选拼写交叉核对，考试标签不代表原书收录确认"
+    },
+    {
+      "id": "original:core:maintain:meaning",
+      "word": "maintain",
+      "meaning": "维持；保持",
+      "example": "She maintained a steady pace throughout the course.",
+      "translation": "她在整个课程期间保持了稳定的节奏。",
+      "books": [
+        "cet6",
+        "postgraduate",
+        "ielts"
+      ],
+      "ability": "meaning",
+      "reviewed": true,
+      "source": "原创练习义项及例句；候选拼写交叉核对，考试标签不代表原书收录确认"
+    },
+    {
+      "id": "original:core:estimate:meaning",
+      "word": "estimate",
+      "meaning": "估计；估算",
+      "example": "Try to estimate how long the exercise will take.",
+      "translation": "试着估计这项练习需要多长时间。",
+      "books": [
+        "cet6",
+        "postgraduate",
+        "ielts"
+      ],
+      "ability": "meaning",
+      "reviewed": true,
+      "source": "原创练习义项及例句；候选拼写交叉核对，考试标签不代表原书收录确认"
+    }
+  ]
+}

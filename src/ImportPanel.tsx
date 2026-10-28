@@ -28,14 +28,14 @@ export default function ImportPanel({
     }
     if (input.current) input.current.value = "";
   }
-  async function previewAcademicPack() {
+  async function previewAcademicPack(pack: 1 | 2) {
     setBusy(true);
     setMessage("");
     setPreview(null);
     try {
-      const response = await fetch("/wordpacks/core-academic-01.json");
+      const response = await fetch(`/wordpacks/core-academic-0${pack}.json`);
       if (!response.ok) throw new Error("词包读取失败");
-      await read(new File([await response.blob()], "core-academic-01.json", { type: "application/json" }));
+      await read(new File([await response.blob()], `core-academic-0${pack}.json`, { type: "application/json" }));
     } catch {
       setMessage("无法读取练习词包，请联网后重试。");
     } finally {
@@ -68,7 +68,10 @@ export default function ImportPanel({
         public/example-wordpack.json。
       </p>
       <p>
-        <button className="secondary" disabled={busy} onClick={previewAcademicPack}>预览原创学术词汇练习包</button>
+        <button className="secondary" disabled={busy} onClick={() => previewAcademicPack(1)}>预览原创学术词汇练习包</button>
+      </p>
+      <p>
+        <button className="secondary" disabled={busy} onClick={() => previewAcademicPack(2)}>预览学术词汇练习包第二组</button>
       </p>
       <p>
         <a href="/wordpacks/core-academic-01.json" download>下载原创学术词汇练习包（6个知识点）</a>

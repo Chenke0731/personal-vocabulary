@@ -327,4 +327,8 @@ test("previews and imports the academic pack after going offline", async ({ page
   await expect(page.getByText("有效知识点 6 个", { exact: false })).toBeVisible();
   await page.getByRole("button", { name: "确认合并" }).click();
   await expect(page.getByRole("status")).toContainText("共 30 个");
+  await page.getByRole("button", { name: "预览学术词汇练习包第二组" }).click();
+  await expect(page.getByText("有效知识点 6 个", { exact: false })).toBeVisible();
+  await page.getByRole("button", { name: "确认合并" }).click();
+  await expect(page.getByRole("status")).toContainText("共 36 个");
 });
