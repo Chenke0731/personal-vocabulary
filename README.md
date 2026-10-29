@@ -19,13 +19,13 @@ npm ci
 npm run dev
 ```
 
-本机打开控制台输出的Local地址。手机与电脑在同一局域网时可尝试Network地址；手机PWA安装和Service Worker离线能力需要HTTPS环境，本机localhost用于开发验证。当前未对外部署。
+本机打开控制台输出的Local地址。手机与电脑在同一局域网时可尝试Network地址；手机PWA安装和Service Worker离线能力需要HTTPS环境，本机localhost用于开发验证。正式站点为 https://personal-vocabulary-ten.vercel.app/ 。
 
 ## 手机单设备使用（无需云数据库）
 
 学习记录只保存在手机当前浏览器的IndexedDB。GitHub保存代码，不保存个人学习记录。未设置 `VITE_SUPABASE_URL` 和 `VITE_SUPABASE_PUBLISHABLE_KEY` 时无需登录，账号同步入口显示本机模式。
 
-若希望电脑关机后手机仍能打开软件，可将本仓库导入Vercel的个人Hobby项目：使用Vite预设、`npm run build` 构建、`dist` 作为输出目录，不填写Supabase环境变量。仓库默认分支是`master`，部署后须在Vercel项目的 Settings → Environments → Production → Branch Tracking 将生产分支设为 `codex/vocabulary-app`，并确认正式网址对应此分支的最新提交。静态托管只提供页面，不保存学习进度；Vercel线上发布和手机真机验收尚未完成。
+正式站点托管在Vercel个人Hobby项目，使用Vite预设、`npm run build` 构建、`dist` 作为输出目录，未填写Supabase环境变量。Vercel生产环境跟踪 `codex/vocabulary-app`；仓库默认分支 `master` 仍是旧版本，不用于发布。静态托管只提供页面，不保存学习进度。已在桌面浏览器验证正式站点加载、一次作答及刷新后记录保留；手机真机安装和断网学习仍需验收。
 
 手机首次联网打开正式HTTPS网址并等待页面加载，再添加到主屏幕；断网重开、作答、刷新后检查记录。每周及大量导入词条后在“我的 → 导出备份”保存JSON，并在手机以外留一份。备份文件包含个人记录，不要提交到公开GitHub。换网址或浏览器时先从旧网址导出，再在新网址“恢复备份”；两个网址的浏览器存储不会自动迁移。
 

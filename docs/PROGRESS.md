@@ -2,12 +2,19 @@
 
 更新：2026-10-29。开发分支：codex/vocabulary-app。
 
+## Vercel 静态发布（2026-10-29）
+
+- Vercel个人Hobby项目 `personal-vocabulary` 已连接公开仓库，生产环境跟踪 `codex/vocabulary-app`，未配置Supabase环境变量。GitHub上的Vercel应用权限已核对并收窄为仅 `Chenke0731/personal-vocabulary` 一个仓库。
+- 首次从旧 `master` 的 `e05bc2e` 构建失败（`vite: command not found`）；随后从开发分支 `70b2b40` 手动创建生产部署，Vercel状态为Ready，日志显示 `npm run build`、TypeScript、Vite及11项离线壳资源构建成功。正式网址：https://personal-vocabulary-ten.vercel.app/ 。
+- 正式域名首页、Service Worker、manifest、JS/CSS及五组练习词包均返回HTTP 200。线上浏览器实际进入今日学习，显示单词释义和例句，完成一次作答；今日已练与已接触统计为1，刷新后仍保留。原创学术词包预览显示6个知识点，已取消合并。正式站点JS/CSS与本地构建字节一致；已比对的首页、manifest及第一、二组词包在统一换行符后内容一致；Service Worker仅构建标识不同。Vercel的两条构建警告是npm对 `cache-dir` 配置的提示，不影响构建。
+- 本机重新运行 `npm test` 68/68、`npm run build` 成功、`npm run test:e2e` 17/17（Chrome，390×844视口）。手机真机安装、断网重开、系统朗读及个人备份文件异地保存尚未实际验收；不能把本机浏览器测试当作真机结果。
+
 ## 手机单设备路线（2026-10-29）
 
-- 用户决定以手机为唯一学习设备，不使用Supabase云数据库。保留现有云同步代码供以后选择，缺少环境变量时界面明确显示“本机学习模式”；README新增Vercel静态托管、生产分支、离线和手动备份步骤。Vercel网页登录尚待手机验证，未创建项目或线上部署。
+- 用户决定以手机为唯一学习设备，不使用Supabase云数据库。保留现有云同步代码供以后选择，缺少环境变量时界面明确显示“本机学习模式”；README新增Vercel静态托管、生产分支、离线和手动备份步骤。本项记录写入时尚未创建线上项目，后续发布结果以上方“Vercel静态发布”为准。
 - 新增端到端检查：从生产预览网址导出含作答与原创练习词包的JSON，再在独立浏览器环境的另一网址恢复；确认作答计数和词条可见。此检查是本机迁移模拟，不能代替手机真机测试。
 - “我的 → 备份与恢复”加入每周及大量导入后的异地备份提醒；390×844浏览器检查确认本机模式与备份区没有横向溢出。本次补充后重新执行 `npm test` 68/68、`npm run build` 成功、受影响的浏览器用例 1/1。
-- 本轮执行 `npm test` 68/68、`npm run build` 成功、`npm run test:e2e` 17/17（本机Chrome、390×844视口）；真实Vercel部署、手机安装及系统朗读离线表现尚未验证。
+- 该轮执行 `npm test` 68/68、`npm run build` 成功、`npm run test:e2e` 17/17（本机Chrome、390×844视口）；当时真实Vercel部署、手机安装及系统朗读离线表现尚未验证。
 
 ## Codex 接手与离线修复（2026-10-29）
 

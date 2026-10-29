@@ -6,11 +6,11 @@
 
 手机优先 React / TypeScript / Vite PWA，Dexie 本地持久化，FSRS 复习调度，导入/校对词包、收藏、备份恢复、起点抽查。云同步和密码恢复代码已存在，但尚无真实 Supabase 服务验收。
 
-当前交付方向：手机单设备使用，学习数据只保存在该浏览器；不配置Supabase。GitHub备份代码，Vercel拟仅托管静态页面。Vercel登录尚待手机验证，未完成线上部署。
+当前交付方向：手机单设备使用，学习数据只保存在该浏览器；不配置Supabase。GitHub备份代码，Vercel个人Hobby项目仅托管静态页面。正式网址：https://personal-vocabulary-ten.vercel.app/ ，生产分支为 `codex/vocabulary-app`。线上桌面浏览器的作答和刷新保留已验证。
 
 ## 尚需完成
 
-- 将 `codex/vocabulary-app` 作为Vercel生产分支发布静态页面，并在手机上验证安装、断网学习、备份恢复和换网址迁移。
+- 在手机真机验证正式站点安装、断网学习、备份恢复和换网址迁移；首次联网加载后再测试断网。
 - Supabase账号、双设备同步和密码恢复邮件暂停为可选后续范围；相关代码虽存在，真实服务尚未验收。时间和起点抽查只保存在本机。
 - 扩展并逐条校对词库：目前有 24 条内置演示知识点和 30 条分五组提供的原创练习词条；完整教材内容、音标、词性与音频尚未接入。
 - 复习计划、时间预算和建议量需要个人长期试用；作答撤销尚未实现。
@@ -21,4 +21,4 @@
 
 检出 codex/vocabulary-app，阅读 README.md、docs/PROGRESS.md、AGENTS.md，运行 npm ci、npm test、npm run build 和 npm run test:e2e。环境变量名为 VITE_SUPABASE_URL、VITE_SUPABASE_PUBLISHABLE_KEY；只使用公开客户端密钥，服务端密钥不放前端或 Git。
 
-本阶段检查：68 项逻辑测试、生产构建与受影响的浏览器回归通过；账号测试使用模拟认证服务。真实托管服务尚未验证。五组练习包现随生产构建预缓存；首次在线加载完成后可离线预览。完整测试结果见 docs/PROGRESS.md。
+本阶段检查：68 项逻辑测试、生产构建与17项浏览器回归通过；Vercel正式构建为Ready，线上首页、作答和刷新保留已验证。账号测试使用模拟认证服务，真实Supabase仍未配置。五组练习包随生产构建预缓存；手机断网表现仍需真机验收。完整测试结果见 docs/PROGRESS.md。
