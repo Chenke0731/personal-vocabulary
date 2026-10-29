@@ -26,6 +26,7 @@ test("phone study persists a review across reload and can restore a backup twice
     .click();
   await expect(page.getByRole("heading", { name: "本机学习模式" })).toBeVisible();
   await expect(page.getByRole("button", { name: "登录并关联本机记录" })).toHaveCount(0);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "导出备份" }).click();
   const download = await downloadPromise;

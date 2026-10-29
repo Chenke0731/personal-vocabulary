@@ -697,6 +697,9 @@ export default function App() {
               <p>
                 导出学习记录、设置及词包。恢复时合并记录，重复文件不会重复计数。
               </p>
+              <p className="muted">
+                建议每周及大量导入词条后导出，并在手机以外保存一份。更换网址或浏览器时，请先导出再恢复。
+              </p>
               <div className="button-row">
                 <button className="primary" onClick={backup}>
                   导出备份

@@ -6,7 +6,7 @@
 
 手机优先 React / TypeScript / Vite PWA，Dexie 本地持久化，FSRS 复习调度，导入/校对词包、收藏、备份恢复、起点抽查。云同步和密码恢复代码已存在，但尚无真实 Supabase 服务验收。
 
-当前交付方向：手机单设备使用，学习数据只保存在该浏览器；不配置Supabase。GitHub备份代码，Vercel拟仅托管静态页面。Vercel账号尚未连接，未完成线上部署。
+当前交付方向：手机单设备使用，学习数据只保存在该浏览器；不配置Supabase。GitHub备份代码，Vercel拟仅托管静态页面。Vercel登录尚待手机验证，未完成线上部署。
 
 ## 尚需完成
 
