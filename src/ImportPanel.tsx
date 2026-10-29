@@ -32,7 +32,7 @@ export default function ImportPanel({
     }
     if (input.current) input.current.value = "";
   }
-  async function previewAcademicPack(pack: 1 | 2 | 3 | 4) {
+  async function previewAcademicPack(pack: 1 | 2 | 3 | 4 | 5) {
     setBusy(true);
     setMessage("");
     setPreview(null);
@@ -88,6 +88,9 @@ export default function ImportPanel({
       </p>
       <p>
         <button className="secondary" disabled={busy} onClick={() => previewAcademicPack(4)}>预览学术词汇练习包第四组</button>
+      </p>
+      <p>
+        <button className="secondary" disabled={busy} onClick={() => previewAcademicPack(5)}>预览学术词汇练习包第五组</button>
       </p>
       <p>
         <a href="/wordpacks/core-academic-01.json" download>下载原创学术词汇练习包（6个知识点）</a>
