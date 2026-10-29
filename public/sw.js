@@ -43,7 +43,8 @@ self.addEventListener("fetch", (event) => {
   }
   if (
     u.pathname.startsWith("/assets/") ||
-    ["/manifest.webmanifest", "/icon.svg", "/wordpacks/core-academic-01.json", "/wordpacks/core-academic-02.json"].includes(u.pathname)
+    ["/manifest.webmanifest", "/icon.svg"].includes(u.pathname) ||
+    /^\/wordpacks\/core-academic-\d+\.json$/.test(u.pathname)
   ) {
     event.respondWith(
       caches.match(event.request, { ignoreVary: true }).then(

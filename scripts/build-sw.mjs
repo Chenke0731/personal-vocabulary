@@ -2,7 +2,9 @@ import { readFile, writeFile, readdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 const index = await readFile('dist/index.html','utf8');
 const assets = (await readdir('dist/assets')).filter(f=>!f.endsWith('.map')).map(f=>'/assets/'+f);
-const wordpacks = ['/wordpacks/core-academic-01.json', '/wordpacks/core-academic-02.json'];
+const wordpacks = (await readdir('dist/wordpacks'))
+  .filter(f => /^core-academic-\d+\.json$/.test(f))
+  .map(f => '/wordpacks/' + f);
 const wordpackContents = await Promise.all(wordpacks.map(path => readFile('dist' + path)));
 const files=['/','/index.html','/manifest.webmanifest','/icon.svg',...wordpacks,...assets];
 const template=await readFile('public/sw.js','utf8');

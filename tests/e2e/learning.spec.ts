@@ -331,4 +331,31 @@ test("previews and imports the academic pack after going offline", async ({ page
   await expect(page.getByText("有效知识点 6 个", { exact: false })).toBeVisible();
   await page.getByRole("button", { name: "确认合并" }).click();
   await expect(page.getByRole("status")).toContainText("共 36 个");
+  for (const [group, total] of [["第三组", 42], ["第四组", 48], ["第五组", 54]] as const) {
+    await page.getByRole("button", { name: `预览学术词汇练习包${group}` }).click();
+    await expect(page.getByText("有效知识点 6 个", { exact: false })).toBeVisible();
+    await page.getByRole("button", { name: "确认合并" }).click();
+    await expect(page.getByRole("status")).toContainText(`共 ${total} 个`);
+  }
+});
+
+test("re-import keeps a user's edited meaning and reports the conflict", async ({ page }) => {
+  await page.goto("/");
+  const nav = page.getByRole("navigation", { name: "手机导航" });
+  await nav.getByRole("button", { name: "我的", exact: true }).click();
+  await page.getByRole("button", { name: "预览原创学术词汇练习包", exact: true }).click();
+  await page.getByRole("button", { name: "确认合并" }).click();
+  await nav.getByRole("button", { name: "词库", exact: true }).click();
+  await page.getByLabel("搜索单词或释义").fill("evaluate");
+  await page.getByRole("button", { name: "校对", exact: true }).click();
+  await page.getByLabel("核心义项").fill("我自己的释义");
+  await page.getByLabel("我已核对这一义项，允许进入学习任务").check();
+  await page.getByRole("button", { name: "保存校对" }).click();
+  await nav.getByRole("button", { name: "我的", exact: true }).click();
+  await page.getByRole("button", { name: "预览原创学术词汇练习包", exact: true }).click();
+  await expect(page.getByRole("alert")).toContainText("evaluate");
+  await page.getByRole("button", { name: "确认合并" }).click();
+  await expect(page.getByRole("status")).toContainText("已保留");
+  await nav.getByRole("button", { name: "词库", exact: true }).click();
+  await expect(page.getByText("我自己的释义")).toBeVisible();
 });
