@@ -90,12 +90,12 @@ export default function CloudPanel({
   }
   return (
     <section className="settings-section">
-      <h2>账号与云端同步</h2>
+      <h2>{cloud ? "账号与云端同步" : "本机学习模式"}</h2>
       {!cloud ? (
         <>
-          <p>尚未配置云服务，当前记录仅保存在本机。</p>
+          <p>无需登录。学习记录保存在当前设备的这个浏览器中。</p>
           <p className="muted">
-            代码已提供接入入口；实际服务与双端同步尚未验证。配置步骤见项目README。
+            请定期使用下方“导出备份”，并在更换设备或网址前保存备份文件。
           </p>
         </>
       ) : recovering ? (

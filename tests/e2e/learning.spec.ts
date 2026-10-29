@@ -24,6 +24,8 @@ test("phone study persists a review across reload and can restore a backup twice
     .getByRole("navigation", { name: "手机导航" })
     .getByRole("button", { name: "我的", exact: true })
     .click();
+  await expect(page.getByRole("heading", { name: "本机学习模式" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "登录并关联本机记录" })).toHaveCount(0);
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "导出备份" }).click();
   const download = await downloadPromise;
@@ -43,6 +45,34 @@ test("phone study persists a review across reload and can restore a backup twice
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
+});
+test("backup transfers progress and a word pack to a separate browser origin", async ({ page, browser }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "开始今日学习" }).click();
+  await page.getByRole("button", { name: "查看答案", exact: true }).click();
+  await page.getByRole("button", { name: "记得 回忆正确" }).click();
+  const sourceNav = page.getByRole("navigation", { name: "手机导航" });
+  await sourceNav.getByRole("button", { name: "我的", exact: true }).click();
+  await page.getByRole("button", { name: "预览原创学术词汇练习包", exact: true }).click();
+  await page.getByRole("button", { name: "确认合并" }).click();
+  const pending = page.waitForEvent("download");
+  await page.getByRole("button", { name: "导出备份" }).click();
+  const backupPath = await (await pending).path();
+  if (!backupPath) throw new Error("No backup downloaded");
+
+  const destination = await browser.newPage();
+  await destination.goto("http://localhost:5189/");
+  await expect(destination.getByLabel("学习概览")).toContainText("0次");
+  const destinationNav = destination.getByRole("navigation", { name: "手机导航" });
+  await destinationNav.getByRole("button", { name: "我的", exact: true }).click();
+  await destination.getByLabel("选择备份文件").setInputFiles(backupPath);
+  await expect(destination.getByRole("status")).toContainText("备份已合并");
+  await destinationNav.getByRole("button", { name: "今日", exact: true }).click();
+  await expect(destination.getByLabel("学习概览")).toContainText("1次");
+  await destinationNav.getByRole("button", { name: "词库", exact: true }).click();
+  await destination.getByLabel("搜索单词或释义").fill("evaluate");
+  await expect(destination.getByRole("heading", { name: "evaluate", exact: true })).toBeVisible();
+  await destination.close();
 });
 test("imports a word pack and keeps spelling separate from meaning", async ({
   page,
